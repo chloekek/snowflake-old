@@ -1,0 +1,4 @@
+/result
+/snowflake-cache/*
+
+!/snowflake-cache/.gitkeep
