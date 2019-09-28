@@ -9,6 +9,8 @@ import std.array : array;
 import std.range : only;
 import std.typecons : Tuple, tuple;
 
+import sys.mktemp : mktemp;
+
 struct Build
 {
     @disable this();
@@ -78,13 +80,12 @@ struct Build
     }
 
     private @safe
-    immutable(char)[] doBuild(immutable(Rule) rule,
-                              immutable(char[])[] inputPaths)
-                              const scope
+    const(char)[] doBuild(immutable(Rule) rule,
+                          const(char[])[] inputPaths)
+                          const scope
     {
-        // TODO: Generate unique path.
         // TODO: Delete partial output if build fails.
-        const tempOutputPath = "/tmp/snowflake-build";
+        const tempOutputPath = mktemp("/tmp/snowflake.XXXXXX");
         rule.build(tempOutputPath, inputPaths);
         return tempOutputPath;
     }
@@ -113,7 +114,9 @@ struct Build
 
         auto paths =
             hashes
-            .map!(h => cast(immutable(char[])) cache.outputPath(h))
+            .map!(h => cache.outputPath(h))
+            .map!(p => "/home/r/snowflake/" ~ p)
+            .map!(p => cast(immutable(char[])) p)
             .array;
 
         return tuple(hashes, paths);

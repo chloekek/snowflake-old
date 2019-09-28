@@ -35,7 +35,7 @@ struct Cache
     }
 
     private static @trusted
-    Hash[Hash] readOutputHashes(immutable(char)[] path)
+    Hash[Hash] readOutputHashes(const(char)[] path)
     {
         Hash[Hash] result;
 
@@ -62,7 +62,7 @@ struct Cache
     /// building with the given thunk, which must return a path to a file that
     /// will be moved into the cache by this method.
     @safe
-    Hash require(Hash descriptionHash, lazy immutable(char)[] build) scope
+    Hash require(Hash descriptionHash, lazy const(char)[] build) scope
     out (outputHash)
     {
         assert (outputHashes[descriptionHash] == outputHash);
@@ -94,7 +94,7 @@ struct Cache
     }
 
     private @safe
-    Hash doBuild(Hash descriptionHash, immutable(char)[] build) scope
+    Hash doBuild(Hash descriptionHash, const(char)[] build) scope
     out (outputHash)
     {
         assert (outputHashes[descriptionHash] == outputHash);

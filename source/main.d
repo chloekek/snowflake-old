@@ -6,6 +6,7 @@ import snowflake.rule : Rule;
 import snowflake.rules.file : file;
 import snowflake.rules.script : script;
 
+import std.datetime.stopwatch : AutoStart, StopWatch;
 import std.stdio : writefln;
 
 nothrow pure @safe
@@ -39,6 +40,22 @@ void main()
 
     auto bd = Build("snowflake-cache");
     auto sorted = sort([hello_world]);
-    foreach (rule; sorted)
-        writefln!"%s @ %(%02x%)"(rule.name, bd.build(rule));
+
+    writefln!"┌──────────────────┬──────────────┬──────────────────────────────────┐";
+    writefln!"│ name             │ duration (s) │ output                           │";
+    writefln!"┝━━━━━━━━━━━━━━━━━━┿━━━━━━━━━━━━━━┿━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┥";
+
+    foreach (rule; sorted) {
+        const timer      = StopWatch(AutoStart.yes);
+        const outputHash = bd.build(rule);
+        const duration   = timer.peek;
+
+        writefln!"│ %-16 s │ %12 f │ %(%02x%) │"(
+            rule.name,
+            duration.total!"usecs" / 1000000.0f,
+            outputHash[0 .. 16],
+        );
+    }
+
+    writefln!"└──────────────────┴──────────────┴──────────────────────────────────┘";
 }

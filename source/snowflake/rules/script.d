@@ -6,6 +6,8 @@ import snowflake.rule : Rule;
 import std.algorithm : copy, map;
 import std.exception : enforce;
 
+import sys.chdir : chdir;
+import sys.mkdtemp : mkdtemp;
 import sys.pid : Pid, WEXITSTATUS, WIFEXITED, execp, fork, waitpid;
 
 immutable(Rule) script(Args...)(Args args)
@@ -66,10 +68,15 @@ class Script
     {
         const bash = "bash";
         const argv = [bash, "-c", script, name, outputPath] ~ inputPaths;
-        // TODO: Change working directory.
+
+        // TODO: Delete up working directory after build.
+        const workingDirectory = mkdtemp("/tmp/snowflake.XXXXXX");
+        chdir(workingDirectory);
+
         // TODO: Forward stdout to stderr.
         // TODO: Clean up environment.
         // TODO: Set up namespaces?
+
         execp(bash, argv);
     }
 
