@@ -1,0 +1,29 @@
+Snowflake is a build system agnostic of programming language.
+
+The build system is written in D, which is a very good programming language.
+Build rules can be defined in D by instantiating subclasses of the Rule
+class. You can even write your own subclasses of the Rule class!
+
+Each rule consists of an intrinsic hash, a list of input rules, and a build
+routine. The intrinsic hash describes the configuration of the build, such as
+the build script or source file contents. The input rules are built prior to
+the dependent rule, and the outputs of the input rules are passed to the
+build routine, which will then produce its own output. The build system takes
+care of ensuring that dependencies are built and outputs are cached.
+
+For caching, the build system does not care about modification times of
+source files, but about the contents of said files. This is more robust.
+
+Build scripts are run in a sandbox. Only the inputs to a build script, and
+whitelisted Nix store paths, are available to the build scripts. Other files
+are not available to the build scripts, and therefore cannot cause any issues
+such as cache incoherency or implicit build order dependence. This ensures
+that they are independent of their environment, to a reasonable degree.
+
+Snowflake is not built using Snowflake itself since self-hosting build
+systems are a pain to build. Requests to make Snowflake self-hosting will be
+dismissed.
+
+Because I maintain this software in my spare time, pressure in the form of
+bug reports, feature requests, or pull requests is not welcome unless
+accompanied by an incredibly large amount of money.
